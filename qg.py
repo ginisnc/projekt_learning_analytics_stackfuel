@@ -1,32 +1,32 @@
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-class InstructionQG:
-    def __init__(self, model_name="bigscience/mt0-base"):
+class GermanQAPipeline:
+    def __init__(self):
+        model_name = "google/flan-t5-small"
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
-    def generate_question(self, text):
+    def generate_qa(self, text: str):
+
         prompt = f"""
-        Du bist ein Lehrer.
-        Lies den folgenden Text und erstelle eine inhaltlich sinnvolle Frage.
-        Halte dich an den Text:
-        {text}
+Generate a question about the text that a teacher could ask.
 
-        Stelle die Frage auf Deutsch.
-        """
+Text:
+{text}
 
-        inputs = self.tokenizer(
-            prompt,
-            return_tensors="pt",
-            truncation=True,
-            max_length=2000
-        )
+
+Question:
+"""
+
+        inputs = self.tokenizer(prompt, return_tensors="pt", truncation=True)
 
         outputs = self.model.generate(
             **inputs,
-            max_length=64,
-            num_beams=4,
+            max_length=128,
+            do_sample=True,
             temperature=0.7
         )
 
-        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        question = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        return question
