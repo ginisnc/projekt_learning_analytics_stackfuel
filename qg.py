@@ -8,21 +8,18 @@ class InstructionQG:
     def generate_question(self, text):
         prompt = f"""
         Du bist ein Lehrer.
-
-        Lies den folgenden Text und erstelle eine inhaltlich sinnvolle Frage,
-        die das Verständnis prüft (keine reine Wiedergabe).
-
-        Text:
+        Lies den folgenden Text und erstelle eine inhaltlich sinnvolle Frage.
+        Halte dich an den Text:
         {text}
 
-        Frage auf Deutsch:
+        Stelle die Frage auf Deutsch.
         """
 
         inputs = self.tokenizer(
             prompt,
             return_tensors="pt",
             truncation=True,
-            max_length=512
+            max_length=2000
         )
 
         outputs = self.model.generate(
